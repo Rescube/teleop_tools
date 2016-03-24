@@ -183,7 +183,7 @@ class JoyTeleop:
         for mapping in cmd['axis_mappings']:
             if len(joy_state.axes)<=mapping['axis']:
               rospy.logerr('Joystick has only {} axes (indexed from 0), but #{} was referenced in config.'.format(len(joy_state.axes), mapping['axis']))
-              val=0
+              val = 0.0
             else:
               val = joy_state.axes[mapping['axis']] * mapping.get('scale', 1.0) + mapping.get('offset', 0.0)
 
