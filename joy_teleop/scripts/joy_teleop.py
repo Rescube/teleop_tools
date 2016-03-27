@@ -7,6 +7,7 @@ import sensor_msgs.msg
 import actionlib
 import rostopic
 import rosservice
+import math
 from threading import Thread
 from rosservice import ROSServiceException
 
@@ -44,7 +45,9 @@ class JoyTeleop:
                 continue
             action_type = teleop_cfg[i]['type']
             self.add_command(i, teleop_cfg[i])
-            if action_type == 'topic':
+            if action_type == 'tankstick':
+                self.register_tankstick(i, teleop_cfg[i])
+            elif action_type == 'topic':
                 self.register_topic(i, teleop_cfg[i])
             elif action_type == 'action':
                 self.register_action(i, teleop_cfg[i])
@@ -67,6 +70,11 @@ class JoyTeleop:
         except JoyTeleopException as e:
             rospy.logerr("error while parsing joystick input: %s", str(e))
         self.old_buttons = data.buttons
+
+    def register_tankstick(self, name, command):
+        """Add a virtual axis for diffdrive diffcontroller"""
+        if (command['left_axis'] is None or command['right_axis'] is None):
+            rospy.logerr("Virtual axis must have a left_axis and a right_axis parameter")
 
     def register_topic(self, name, command):
         """Add a topic publisher for a joystick command"""
@@ -138,7 +146,11 @@ class JoyTeleop:
 
     def add_command(self, name, command):
         """Add a command to the command list"""
-        if command['type'] == 'topic':
+        if command['type'] == 'tankstick':
+            if 'deadman_buttons' not in command:
+                command['deadman_buttons'] = []
+            command['buttons'] = command['deadman_buttons']
+        elif command['type'] == 'topic':
             if 'deadman_buttons' not in command:
                 command['deadman_buttons'] = []
             command['buttons'] = command['deadman_buttons']
@@ -148,12 +160,16 @@ class JoyTeleop:
         elif command['type'] == 'service':
             if 'service_request' not in command:
                 command['service_request'] = {}
+        else:
+            rospy.logerr("add_command: Unknown command type: {} ".format(command['type']))
         self.command_list[name] = command
 
     def run_command(self, command, joy_state):
         """Run a joystick command"""
         cmd = self.command_list[command]
-        if cmd['type'] == 'topic':
+        if cmd['type'] == 'tankstick':
+            self.run_tankstick(command, joy_state)
+        elif cmd['type'] == 'topic':
             self.run_topic(command, joy_state)
         elif cmd['type'] == 'action':
             if cmd['action_name'] in self.offline_actions:
@@ -176,6 +192,20 @@ class JoyTeleop:
         else:
             raise JoyTeleopException('command {} is neither a topic publisher nor an action or service client'
                                      .format(command))
+
+    def run_tankstick(self, c, joy_state):
+        cmd = self.command_list[c]
+        speed = 0.0
+        turn = 0.0
+        if len(joy_state.axes)<=cmd['left_axis'] or len(joy_state.axes)<=cmd['right_axis']:
+          rospy.logerr('tankstick: Joystick has only {} axes (indexed from 0), but #{} and #{} was referenced in config.'.format(len(joy_state.axes), cmd['left_axis'], cmd['right_axis']))
+        else:
+          speed = (joy_state.axes[cmd['left_axis']]+joy_state.axes[cmd['right_axis']])*(cmd['movespeed_mpersec']/2.0)
+          turn = (-joy_state.axes[cmd['left_axis']]+joy_state.axes[cmd['right_axis']])*(cmd['turnspeed_radpersec']/2.0)
+          rospy.loginfo("Axes1: %d ",len(joy_state.axes))
+          joy_state.axes=joy_state.axes+(speed,turn)
+          rospy.loginfo("Axes2: %d",len(joy_state.axes))
+          rospy.loginfo("Speed: %f   Turn: %f ",speed,turn)
 
     def run_topic(self, c, joy_state):
         cmd = self.command_list[c]
