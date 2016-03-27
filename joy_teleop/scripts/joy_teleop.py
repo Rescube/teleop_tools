@@ -202,10 +202,10 @@ class JoyTeleop:
         else:
           speed = (joy_state.axes[cmd['left_axis']]+joy_state.axes[cmd['right_axis']])*(cmd['movespeed_mpersec']/2.0)
           turn = (-joy_state.axes[cmd['left_axis']]+joy_state.axes[cmd['right_axis']])*(cmd['turnspeed_radpersec']/2.0)
-          rospy.loginfo("Axes1: %d ",len(joy_state.axes))
           joy_state.axes=joy_state.axes+(speed,turn)
-          rospy.loginfo("Axes2: %d",len(joy_state.axes))
-          rospy.loginfo("Speed: %f   Turn: %f ",speed,turn)
+#          rospy.loginfo("Axes1: %d ",len(joy_state.axes))
+#          rospy.loginfo("Axes2: %d",len(joy_state.axes))
+#          rospy.loginfo("Speed: %f   Turn: %f ",speed,turn)
 
     def run_topic(self, c, joy_state):
         cmd = self.command_list[c]
