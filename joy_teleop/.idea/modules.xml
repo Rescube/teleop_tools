@@ -2,7 +2,11 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
+      <module fileurl="file://$PROJECT_DIR$/../../barrel_bringup/.idea/barrel_bringup.iml" filepath="$PROJECT_DIR$/../../barrel_bringup/.idea/barrel_bringup.iml" />
+      <module fileurl="file://$PROJECT_DIR$/../../rescube_mission_control/camera_switch/.idea/camera_switch.iml" filepath="$PROJECT_DIR$/../../rescube_mission_control/camera_switch/.idea/camera_switch.iml" />
+      <module fileurl="file://$PROJECT_DIR$/../../rescube_mission_control/dynamic_topic_mux/.idea/dynamic_topic_mux.iml" filepath="$PROJECT_DIR$/../../rescube_mission_control/dynamic_topic_mux/.idea/dynamic_topic_mux.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/joy_teleop.iml" filepath="$PROJECT_DIR$/.idea/joy_teleop.iml" />
+      <module fileurl="file://$PROJECT_DIR$/../../rescube_mission_control/tankstick/.idea/tankstick.iml" filepath="$PROJECT_DIR$/../../rescube_mission_control/tankstick/.idea/tankstick.iml" />
     </modules>
   </component>
 </project>

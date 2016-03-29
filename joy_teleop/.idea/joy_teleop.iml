@@ -4,6 +4,11 @@
     <content url="file://$MODULE_DIR$" />
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
+    <orderEntry type="module" module-name="camera_switch" />
+    <orderEntry type="module" module-name="dynamic_topic_mux" />
+    <orderEntry type="module" module-name="tankstick" />
+    <orderEntry type="module" module-name="barrel_bringup" />
+    <orderEntry type="module" module-name="camera_switch" />
   </component>
   <component name="TestRunnerService">
     <option name="projectConfiguration" value="Nosetests" />
