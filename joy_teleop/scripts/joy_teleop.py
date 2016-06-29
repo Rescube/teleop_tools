@@ -64,8 +64,11 @@ class JoyTeleop:
 
     def joy_callback(self, data):
         try:
+#            rospy.logwarn("joy_callback")
             for c in self.command_list:
-                if self.match_command(c, data.buttons):
+#                rospy.logwarn("joy_callback_loop")
+#                if self.match_command(c, data.buttons):
+#                    rospy.logwarn("joy_callback_loop")
                     self.run_command(c, data)
         except JoyTeleopException as e:
             rospy.logerr("error while parsing joystick input: %s", str(e))
